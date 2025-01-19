@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/ahsoromdoni/drone-patrol/constant"
 	"github.com/ahsoromdoni/drone-patrol/generated"
 	"github.com/ahsoromdoni/drone-patrol/repository"
 	"github.com/ahsoromdoni/drone-patrol/validation"
@@ -13,7 +14,7 @@ func (s *Server) CreateEstate(ctx echo.Context) error {
 	var req generated.EstateRequest
 
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: "Invalid request payload"})
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: constant.BadRequest})
 	}
 
 	if err := validation.ValidateCreateEstate(req); err != nil {

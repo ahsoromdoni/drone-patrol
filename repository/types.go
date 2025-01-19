@@ -39,6 +39,24 @@ type CreateTreeOutput struct {
 	Id string
 }
 
+type CountTreeByEstateIdInput struct {
+	EstateId string
+}
+
+type CountTreeByEstateIdOutput struct {
+	TotalTrees int
+}
+
+type GetTreeHeightStatsInput struct {
+	EstateId string
+}
+
+type GetTreeHeightStatsOutput struct {
+	MaxHeight    int
+	MinHeight    int
+	MedianHeight int
+}
+
 func (gebio *GetEstateByIdOutput) IsCordinateOutOfBound(x, y int) bool {
 	return x > gebio.Length || y > gebio.Width
 }

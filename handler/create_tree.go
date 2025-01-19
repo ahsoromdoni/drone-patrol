@@ -3,8 +3,10 @@ package handler
 import (
 	"net/http"
 
+	"github.com/ahsoromdoni/drone-patrol/constant"
 	"github.com/ahsoromdoni/drone-patrol/generated"
 	"github.com/ahsoromdoni/drone-patrol/repository"
+	"github.com/ahsoromdoni/drone-patrol/utils"
 	"github.com/ahsoromdoni/drone-patrol/validation"
 	"github.com/labstack/echo/v4"
 )
@@ -13,7 +15,7 @@ func (s *Server) CreateTree(ctx echo.Context, id string) error {
 	var req generated.TreeRequest
 
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: "Invalid request payload"})
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: constant.BadRequest})
 	}
 
 	if err := validation.ValidateCreateTree(req); err != nil {
@@ -23,11 +25,11 @@ func (s *Server) CreateTree(ctx echo.Context, id string) error {
 	var getEstateByIdInput = repository.GetEstateByIdInput{Id: id}
 	estate, err := s.Repository.GetEstateById(ctx.Request().Context(), getEstateByIdInput)
 	if err != nil {
-		return err
+		return utils.CheckForNotFoundError(ctx, err, constant.EstateNotFound)
 	}
 
 	if estate.IsCordinateOutOfBound(req.X, req.Y) {
-		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: "Invalid request payload"})
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: constant.BadRequest})
 	}
 
 	var createTreeInput = repository.CreateTreeInput{
@@ -43,11 +45,6 @@ func (s *Server) CreateTree(ctx echo.Context, id string) error {
 
 	var resp = generated.TreeResponse{Id: tree.Id}
 	return ctx.JSON(http.StatusCreated, resp)
-}
-
-// Unimplement methods
-func (s *Server) GetEstateStats(ctx echo.Context, id string) error {
-	return nil
 }
 
 func (s *Server) GetDronePlan(ctx echo.Context, id string, params generated.GetDronePlanParams) error {
