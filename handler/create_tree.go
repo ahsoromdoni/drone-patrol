@@ -30,7 +30,7 @@ func (s *Server) CreateTree(ctx echo.Context, id string) error {
 		return utils.CheckForNotFoundError(ctx, err, constant.EstateNotFound)
 	}
 
-	if estate.IsCordinateOutOfBound(req.X, req.Y) {
+	if estate.IsTreeCordinateOutOfBound(req.X, req.Y) {
 		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{Message: constant.BadRequest})
 	}
 

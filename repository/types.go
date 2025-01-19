@@ -69,6 +69,6 @@ type GetTreesByEstateIdOutput struct {
 	Height   int
 }
 
-func (gebio *GetEstateByIdOutput) IsCordinateOutOfBound(x, y int) bool {
+func (gebio *GetEstateByIdOutput) IsTreeCordinateOutOfBound(x, y int) bool {
 	return x > gebio.Length || y > gebio.Width
 }
