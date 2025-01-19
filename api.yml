@@ -206,6 +206,18 @@ components:
         distance:
           type: integer
           example: 200
+    Rest:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+          example: 10
+        y:
+          type: integer
+          example: 1
     DronePlanResponseWithRest:
       type: object
       required:
@@ -215,14 +227,4 @@ components:
           type: integer
           example: 200
         rest:
-          type: object
-          required:
-            - x
-            - y
-          properties:
-            x:
-              type: integer
-              example: 10
-            y:
-              type: integer
-              example: 1
+          $ref: "#/components/schemas/Rest"
