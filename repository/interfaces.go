@@ -12,4 +12,5 @@ type RepositoryInterface interface {
 	InsertTree(ctx context.Context, input CreateTreeInput) (output CreateTreeOutput, err error)
 	CountTreeByEstateId(ctx context.Context, input CountTreeByEstateIdInput) (output CountTreeByEstateIdOutput, err error)
 	GetTreeHeightStats(ctx context.Context, input GetTreeHeightStatsInput) (output GetTreeHeightStatsOutput, err error)
+	GetTreesByEstateId(ctx context.Context, input GetTreesByEstateIdInput) (output []GetTreesByEstateIdOutput, err error)
 }

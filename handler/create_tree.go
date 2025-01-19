@@ -11,6 +11,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Add a new tree to the estate
+// (POST /estate/{id}/tree)
 func (s *Server) CreateTree(ctx echo.Context, id string) error {
 	var req generated.TreeRequest
 
@@ -45,8 +47,4 @@ func (s *Server) CreateTree(ctx echo.Context, id string) error {
 
 	var resp = generated.TreeResponse{Id: tree.Id}
 	return ctx.JSON(http.StatusCreated, resp)
-}
-
-func (s *Server) GetDronePlan(ctx echo.Context, id string, params generated.GetDronePlanParams) error {
-	return nil
 }

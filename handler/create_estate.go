@@ -10,6 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Add a new estate
+// (POST /estate)
 func (s *Server) CreateEstate(ctx echo.Context) error {
 	var req generated.EstateRequest
 

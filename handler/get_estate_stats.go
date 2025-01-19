@@ -10,6 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Get statistics for the estate
+// (GET /estate/{id}/stats)
 func (s *Server) GetEstateStats(ctx echo.Context, id string) error {
 	var countTreeByEstateIdInput = repository.CountTreeByEstateIdInput{EstateId: id}
 	count, err := s.Repository.CountTreeByEstateId(ctx.Request().Context(), countTreeByEstateIdInput)

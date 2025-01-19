@@ -57,6 +57,18 @@ type GetTreeHeightStatsOutput struct {
 	MedianHeight int
 }
 
+type GetTreesByEstateIdInput struct {
+	EstateId string
+}
+
+type GetTreesByEstateIdOutput struct {
+	Id       string
+	EstateId string
+	XAxis    int
+	YAxis    int
+	Height   int
+}
+
 func (gebio *GetEstateByIdOutput) IsCordinateOutOfBound(x, y int) bool {
 	return x > gebio.Length || y > gebio.Width
 }

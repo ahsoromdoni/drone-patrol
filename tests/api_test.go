@@ -89,14 +89,14 @@ func getTestCases() []TestCase {
 			[]any{CreateTree, 10, 5, 5},
 			[]any{CreateTree, 20, 6, 5},
 		}),
-		// CreateNormalTestCase("Normal 2", []any{
-		// 	[]any{CreateEstate, 5, 1},
-		// 	[]any{CreateTree, 10, 2, 1},
-		// 	[]any{CreateTree, 20, 3, 1},
-		// 	[]any{CreateTree, 10, 4, 1},
-		// 	[]any{GetStats, 3, 10, 20, 10},
-		// 	[]any{GetDronePlan, 0, 82},
-		// }),
+		CreateNormalTestCase("Normal 2", []any{
+			[]any{CreateEstate, 5, 1},
+			[]any{CreateTree, 10, 2, 1},
+			[]any{CreateTree, 20, 3, 1},
+			[]any{CreateTree, 10, 4, 1},
+			[]any{GetStats, 3, 10, 20, 10},
+			[]any{GetDronePlan, 0, 82},
+		}),
 	}
 }
 
