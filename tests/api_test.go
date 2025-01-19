@@ -50,82 +50,45 @@ func TestApi(t *testing.T) {
 
 func getTestCases() []TestCase {
 	return []TestCase{
+		// ----- Test for API
 		{
-			Name: "Test Hello",
+			Name: "Test Error 1",
 			Steps: []TestCaseStep{
 				{
 					Request: func(t *testing.T, ctx context.Context, tc *TestCase) (*http.Request, error) {
-						return http.NewRequest("GET", ApiUrl+"/hello", nil)
+						return http.NewRequest("POST", ApiUrl+"/estate", nil)
 					},
-					Expect: func(t *testing.T, ctx context.Context, tc *TestCase, resp *http.Response, data map[string]any) {
-						require.Equal(t, http.StatusBadRequest, resp.StatusCode)
-					},
+					Expect: ExpectBadRequest(),
 				},
 			},
 		},
 		{
-			Name: "Test Hello with name",
+			Name: "Test Error 2: Invalid Format",
 			Steps: []TestCaseStep{
 				{
-					Request: func(t *testing.T, ctx context.Context, tc *TestCase) (*http.Request, error) {
-						return http.NewRequest("GET", ApiUrl+"/hello?id=123", nil)
-					},
-					Expect: func(t *testing.T, ctx context.Context, tc *TestCase, resp *http.Response, data map[string]any) {
-						require.Equal(t, http.StatusOK, resp.StatusCode)
-						require.Equal(t, "Hello User 123", data["message"])
-					},
-				},
-				{
-					Request: func(t *testing.T, ctx context.Context, tc *TestCase) (*http.Request, error) {
-						return http.NewRequest("GET", ApiUrl+"/hello?id=456", nil)
-					},
-					Expect: func(t *testing.T, ctx context.Context, tc *TestCase, resp *http.Response, data map[string]any) {
-						require.Equal(t, http.StatusOK, resp.StatusCode)
-						step1 := tc.Steps[0]
-						require.Equal(t, "Hello User 123", step1.Result["message"])
-					},
+					Request: SendRequestNewEstate(-1, -5),
+					Expect:  ExpectBadRequest(),
 				},
 			},
 		},
-		//----- Test for API
-		// {
-		// 	Name: "Test Error 1",
-		// 	Steps: []TestCaseStep{
-		// 		{
-		// 			Request: func(t *testing.T, ctx context.Context, tc *TestCase) (*http.Request, error) {
-		// 				return http.NewRequest("POST", ApiUrl+"/estate", nil)
-		// 			},
-		// 			Expect: ExpectBadRequest(),
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	Name: "Test Error 2: Invalid Format",
-		// 	Steps: []TestCaseStep{
-		// 		{
-		// 			Request: SendRequestNewEstate(-1, -5),
-		// 			Expect:  ExpectBadRequest(),
-		// 		},
-		// 	},
-		// },
-		// {
-		// 	Name: "Test Error: Create Tree Out of Bound",
-		// 	Steps: []TestCaseStep{
-		// 		{
-		// 			Request: SendRequestNewEstate(10, 20),
-		// 			Expect:  ExpectNewEstateOk(),
-		// 		},
-		// 		{
-		// 			Request: SendRequestNewTree(5, 0, 0),
-		// 			Expect:  ExpectBadRequest(),
-		// 		},
-		// 	},
-		// },
-		// CreateNormalTestCase("Normal 1", []any{
-		// 	[]any{CreateEstate, 10, 20},
-		// 	[]any{CreateTree, 10, 5, 5},
-		// 	[]any{CreateTree, 20, 6, 5},
-		// }),
+		{
+			Name: "Test Error: Create Tree Out of Bound",
+			Steps: []TestCaseStep{
+				{
+					Request: SendRequestNewEstate(10, 20),
+					Expect:  ExpectNewEstateOk(),
+				},
+				{
+					Request: SendRequestNewTree(5, 0, 0),
+					Expect:  ExpectBadRequest(),
+				},
+			},
+		},
+		CreateNormalTestCase("Normal 1", []any{
+			[]any{CreateEstate, 10, 20},
+			[]any{CreateTree, 10, 5, 5},
+			[]any{CreateTree, 20, 6, 5},
+		}),
 		// CreateNormalTestCase("Normal 2", []any{
 		// 	[]any{CreateEstate, 5, 1},
 		// 	[]any{CreateTree, 10, 2, 1},
@@ -281,7 +244,7 @@ func ExpectGetDronePlanOk(distance int) ExpectFunc {
 }
 
 func RequireReturnIsUUID(t *testing.T, resp *http.Response, data map[string]any) {
-	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.Equal(t, http.StatusCreated, resp.StatusCode)
 	RequireIsUUID(t, data["id"].(string))
 }
 
