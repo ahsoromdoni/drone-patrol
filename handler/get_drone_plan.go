@@ -62,43 +62,47 @@ func (s *Server) GetDronePlan(ctx echo.Context, id string, params generated.GetD
 }
 
 func getDroneTravelDistance(estate repository.GetEstateByIdOutput, trees []repository.GetTreesByEstateIdOutput, maxDistance int) (int, Coordinate) {
-	var distance = 0
-	var horizontalMove = 10
-	var lastDroneHeight = 0
-	var currentDroneHeight = 0
-	var distanceAdjustment = 10
-	var isThereATree = false
+	var distance = 0                                     // Variable to keep track of the total distance traveled by the drone
+	var lastDroneHeight = 0                              // The height of the drone from the previous step
+	var currentDroneHeight = 0                           // The current height of the drone
+	var horizontalMove = constant.HorizontalMove         // The fixed distance the drone moves horizontally per step
+	var distanceAdjustment = constant.DistanceAdjustment // Distance adjustment for vertical movement
+	var isThereATree = false                             // Flag to indicate if the drone encountered a tree in the current position
 
 	var drone = Drone{
-		ToleranceDistance: 1,
+		ToleranceDistance: constant.ToleranceDistance,
 		LastHeight:        &lastDroneHeight,
 		CurrentHeight:     &currentDroneHeight,
 	}
 
 	var treeMap = generateTreeCoordinateMap(trees)
 
-	for i := 1; i <= estate.Width; i++ {
-		if i%2 != 0 {
+	for y := 1; y <= estate.Width; y++ {
+		if y%2 != 0 {
 			// Drone fly to the right
-			for j := 1; j <= estate.Length; j++ {
-
-				if tree, ok := treeMap[Coordinate{j, i}]; ok {
+			for x := 1; x <= estate.Length; x++ {
+				// Check if there is a tree at the current coordinate
+				if tree, ok := treeMap[Coordinate{x, y}]; ok {
+					// If there is a tree, calculate the vertical movement
 					distance += calculateVerticalMovement(tree, drone)
-					isThereATree = true
+					isThereATree = true // Set the flag indicating a tree was encountered
 				}
 
 				distance += horizontalMove
 
+				// Adjust the distance based on whether a tree was encountered
 				adjustDistance := adjustDistance(isThereATree, distance, distanceAdjustment, drone)
-				distanceCheck, coordinate := checkMaxDistance(maxDistance, horizontalMove, adjustDistance, j, i, estate, true)
+
+				// Check if the drone has exceeded the maximum allowed distance
+				distanceCheck, coordinate := checkMaxDistance(maxDistance, horizontalMove, adjustDistance, x, y, estate, true)
 				if distanceCheck > 0 {
 					return distanceCheck, coordinate
 				}
 			}
 		} else {
 			// Drone fly to the left
-			for j := estate.Length; j >= 1; j-- {
-				if tree, ok := treeMap[Coordinate{j, i}]; ok {
+			for x := estate.Length; x >= 1; x-- {
+				if tree, ok := treeMap[Coordinate{x, y}]; ok {
 					distance += calculateVerticalMovement(tree, drone)
 					isThereATree = true
 				}
@@ -106,7 +110,7 @@ func getDroneTravelDistance(estate repository.GetEstateByIdOutput, trees []repos
 				distance += horizontalMove
 
 				adjustDistance := adjustDistance(isThereATree, distance, distanceAdjustment, drone)
-				distanceCheck, coordinate := checkMaxDistance(maxDistance, horizontalMove, adjustDistance, j, i, estate, false)
+				distanceCheck, coordinate := checkMaxDistance(maxDistance, horizontalMove, adjustDistance, x, y, estate, false)
 				if distanceCheck > 0 {
 					return distanceCheck, coordinate
 				}
@@ -115,6 +119,7 @@ func getDroneTravelDistance(estate repository.GetEstateByIdOutput, trees []repos
 		}
 	}
 
+	// Final distance adjustment after all movement calculations
 	distance = adjustDistance(isThereATree, distance, distanceAdjustment, drone)
 
 	return distance, Coordinate{}
